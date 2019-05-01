@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 import os
-import users, speech, gestures
+import users, speech
 
 app = Flask(__name__)
 CORS(app)
@@ -28,7 +28,7 @@ def route_post_speech():
     """
     data = request.form["data"]
     category = request.form["category"]
-    return jsonify(speech.post_speech(request.form))
+    return jsonify(speech.post_speech(request.form, category))
     
 @app.route("/get_speech_details", methods=["GET"])
 def route_get_speech_details():
@@ -44,4 +44,4 @@ def route_get_all_speeches():
     return jsonify(speech.get_all_speeches(user_name, category))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=5000)
