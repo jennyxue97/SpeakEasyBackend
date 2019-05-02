@@ -17,9 +17,18 @@ def get_speech_details(speech_name, user_name, category):
     data = list(client.QueryItems(collection_link, query, config_cosmos.OPTIONS))
     return data[0]
 
-def get_all_speeches(user_name, category):
-    collection_link = "dbs/speakeasy/colls/" + category
-    client = cosmos_client.CosmosClient(url_connection=config_cosmos.COSMOSDB_HOST, auth={'masterKey': config_cosmos.COSMOSDB_KEY})
-    query = "SELECT %s.speech_name FROM %s WHERE %s.user_name='%s'" %(category, category, category, user_name)
-    data = list(client.QueryItems(collection_link, query, config_cosmos.OPTIONS))
-    return list(map(lambda item: item["speech_name"], data))
+def get_all_speeches(user_name):
+    categories = ["gaze", "speech", "gestures"]
+    final = {}
+    for category in categories:
+        collection_link = "dbs/speakeasy/colls/" + category 
+        client = cosmos_client.CosmosClient(url_connection=config_cosmos.COSMOSDB_HOST, auth={'masterKey': config_cosmos.COSMOSDB_KEY})
+        query = "SELECT * FROM %s WHERE %s.user_name='%s'" %(category, category, user_name)
+        data = list(client.QueryItems(collection_link, query, config_cosmos.OPTIONS))
+
+        final[category] = []
+        print(data)
+        for item in data:
+            final[category].append({"speech_name": item["speech_name"], "timestamp": item["timestamp"]})
+
+    return final

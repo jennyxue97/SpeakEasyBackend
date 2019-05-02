@@ -26,7 +26,6 @@ def route_post_speech():
     user_name: str
     speech_name: str
     """
-    data = request.form["data"]
     category = request.form["category"]
     return jsonify(speech.post_speech(request.form, category))
     
@@ -40,8 +39,7 @@ def route_get_speech_details():
 @app.route("/get_all_speeches", methods=["GET"])
 def route_get_all_speeches():
     user_name = request.args["user_name"]
-    category = request.args["category"]
-    return jsonify(speech.get_all_speeches(user_name, category))
+    return jsonify(speech.get_all_speeches(user_name))
 
 if __name__ == "__main__":
     app.run(port=5000)
