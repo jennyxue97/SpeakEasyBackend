@@ -20,17 +20,15 @@ def get_speech_details(speech_name, user_name, category):
 
 def get_all_speeches(user_name):
     categories = ["gaze", "speech", "gestures"]
-    final = {}
+    final = []
     for category in categories:
         collection_link = "dbs/speakeasy/colls/" + category 
         client = cosmos_client.CosmosClient(url_connection=config_cosmos.COSMOSDB_HOST, auth={'masterKey': config_cosmos.COSMOSDB_KEY})
         query = "SELECT * FROM %s WHERE %s.user_name='%s'" %(category, category, user_name)
         data = list(client.QueryItems(collection_link, query, config_cosmos.OPTIONS))
 
-        final[category] = []
-        print(data)
         for item in data:
-            final[category].append({"speech_name": item["speech_name"], "timestamp": item["timestamp"]})
-
-        final[category] = sorted(final[cateogry], key = lambda x: parser.parse(x["timestamp"]))
+            final.append({"speech_name": item["speech_name"], "timestamp": item["timestamp"], "category": category})
+    
+    final = sorted(final, key=lambda x: parser.parse(" ".join(x["timestamp"].split(" ")[:-4])))[::-1]
     return final
