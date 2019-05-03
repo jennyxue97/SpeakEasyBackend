@@ -1,6 +1,7 @@
 import config_cosmos
 import azure.cosmos.cosmos_client as cosmos_client
 import json
+from dateutil import parser
 
 def post_speech(speech_details, category):
     speech_details = speech_details.copy()
@@ -31,4 +32,5 @@ def get_all_speeches(user_name):
         for item in data:
             final[category].append({"speech_name": item["speech_name"], "timestamp": item["timestamp"]})
 
+        final[category] = sorted(final[cateogry], key = lambda x: parser.parse(x["timestamp"]))
     return final
